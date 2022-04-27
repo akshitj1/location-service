@@ -1,0 +1,47 @@
+buildscript {
+    ext {
+        springVersion = '2.3.12.RELEASE'
+        springPluginVersion = '1.0.11.RELEASE'
+        sprinFoxSwaggerVersion = '3.0.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version "${springPluginVersion}"
+    id 'org.springframework.boot' version "${springVersion}"
+}
+
+group 'com.akshit.services'
+version '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springVersion}")
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // swagger
+    implementation "io.springfox:springfox-boot-starter:${sprinFoxSwaggerVersion}"
+
+    // mysql
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}

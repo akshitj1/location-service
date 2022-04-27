@@ -1,0 +1,51 @@
+---
+version: '3'
+
+services:
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+
+  mysql:
+    build:
+      dockerfile: docker/db.Dockerfile
+    #    image: mariadb:10.3
+    volumes:
+      - "location-mysql-data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: location_db
+    ports:
+      - "3306:3306"
+
+  location-service:
+    build:
+      dockerfile: Dockerfile
+    container_name: location-service-dev
+    environment:
+      - "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    depends_on:
+      - redis
+      - mysql
+
+  knowitall-service:
+    build:
+      context: ../knowitall-service
+      dockerfile: Dockerfile
+    container_name: knowitall-service-dev
+    environment:
+      - "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    ports:
+      - "8081:8080"
+      - "5006:5005"
+    depends_on:
+      - location-service
+
+volumes:
+  location-mysql-data:
